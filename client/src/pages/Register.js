@@ -5,14 +5,19 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import toast from 'react-hot-toast'
+import { hideLoading, showLoading } from '../redux/alertReducer'
+import { useDispatch } from 'react-redux'
 
 export const Register = () => {
 
+  const dispatch = useDispatch()
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
     try {
+      dispatch(showLoading())
       const res = await axios.post('/api/user/register', values)
+      dispatch(hideLoading())
       if (res.data.success) {
         toast.success(res.data.message)
         toast.success("Редирект на страницу входа")
@@ -21,6 +26,8 @@ export const Register = () => {
         toast.error(res.data.message)
       }
     } catch (e) {
+      dispatch(hideLoading())
+
       toast.error("Что-то пошло не так", e)
     }
   }
