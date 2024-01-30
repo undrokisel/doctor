@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import './Layout.css'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 
 export const Layout = ({ children }) => {
     const [collapsed, setCollapsed] = useState(false);
-    const user = useSelector(state => state.user)
+    const user = useSelector(state => state?.user?.user)
+    const navigate = useNavigate();
     const location = useLocation();
     const userMenu = [
         {
@@ -19,7 +20,7 @@ export const Layout = ({ children }) => {
             icon: 'ri-nurse-line'
         },
         {
-            name: "Назначить доктора",
+            name: "Выбрать доктора",
             path: '/apply-doctor',
             icon: 'ri-hospital-line'
         },
@@ -28,21 +29,73 @@ export const Layout = ({ children }) => {
             path: '/profile',
             icon: 'ri-user-line'
         },
+    ]
+
+
+    const adminMenu = [
         {
-            name: "Выйти",
-            path: '/logout',
-            icon: 'ri-logout-box-r-line'
+            name: "Главная",
+            path: '/',
+            icon: 'ri-home-4-line'
+        },
+        {
+            name: "Пациенты",
+            path: '/appointments',
+            icon: 'ri-nurse-line'
+        },
+        {
+            name: "Врачи",
+            path: '/apply-doctor',
+            icon: 'ri-hospital-line'
+        },
+        {
+            name: "Профиль",
+            path: '/profile',
+            icon: 'ri-user-line'
         },
     ]
 
-    const menuToBeRendered = userMenu;
+
+    const doctorMenu = [
+        {
+            name: "Главная",
+            path: '/',
+            icon: 'ri-home-4-line'
+        },
+        {
+            name: "Мои часы работы",
+            path: '/',
+            icon: 'ri-nurse-line'
+        },
+        {
+            name: "Подтвержденные записи",
+            path: '/apply-doctor',
+            icon: 'ri-hospital-line'
+        },
+        {
+            name: "Неподтвержденные записи",
+            path: '/apply-doctor',
+            icon: 'ri-hospital-line'
+        },
+        {
+            name: "Профиль",
+            path: '/profile',
+            icon: 'ri-user-line'
+        },
+    ]
+
+    const menuToBeRendered = user?.isAdmin
+        ? adminMenu
+        : user?.isDoctor
+            ? doctorMenu
+            : userMenu
 
     return (
         <div className="main">
             <div className="d-flex layout">
                 <aside className='sidebar'>
                     <div className="sidebar__header">
-                        {!collapsed && <h1>Мой доктор</h1>}
+                        {!collapsed && <h1 className='logo'>Мой доктор</h1>}
                     </div>
                     <menu className="menu">
                         {
@@ -58,6 +111,17 @@ export const Layout = ({ children }) => {
                                 )
                             })
                         }
+                        <div
+                            onClick={() => { 
+                                localStorage.clear() 
+                                navigate('/login')
+                            }}
+                            className={`menu-item`}>
+                            <i className='ri-logout-box-r-line'></i>
+                            {
+                                !collapsed && <Link to='/login' >Выйти</Link>
+                            }
+                        </div>
                     </menu>
                 </aside>
 
@@ -75,7 +139,7 @@ export const Layout = ({ children }) => {
                             <Link
                                 className='link'
                                 to="/profile">
-                                {user?.user.name}
+                                {user?.name}
                             </Link>
                         </div>
 

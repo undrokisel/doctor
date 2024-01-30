@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React from 'react'
 import { useEffect } from 'react'
-import {Layout} from '../components/Layout'
+import { Layout } from '../components/Layout'
 
 export const Home = () => {
 
@@ -13,7 +13,6 @@ export const Home = () => {
         }
       })
     } catch (error) {
-      console.log(error)
     }
   }
 
