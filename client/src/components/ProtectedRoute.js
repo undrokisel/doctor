@@ -2,16 +2,12 @@ import React, { useEffect } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { 
-    // reloadUserData, 
-    setUser } from '../redux/userReducer';
+import { setUser } from '../redux/userReducer';
 import { hideLoading, showLoading } from '../redux/alertReducer';
 
 export const ProtectedRoute = (props) => {
 
-    const { user, 
-        // reloadUser 
-    } = useSelector(state => state.user);
+    const { user } = useSelector(state => state.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -29,7 +25,6 @@ export const ProtectedRoute = (props) => {
             dispatch(hideLoading())
             if (response.data.success) {
                 dispatch(setUser(response.data.data))
-                // dispatch(reloadUserData(false))
             } else {
                 localStorage.clear()
                 navigate('/login')
