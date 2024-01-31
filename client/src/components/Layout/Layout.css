@@ -2,6 +2,10 @@
     padding: 20px;
 }
 
+.layout {
+    /* min-height: 100%; */
+}
+
 .sidebar {
     background-color: #005555;
     border-radius: 5px;
@@ -38,8 +42,19 @@
     border-radius: 5px;
     box-shadow: 0 0 2px gray;
     height: 82.7vh;
+    padding: 15px;
 }
 
+.page-title {
+    font-size: 1.8rem;
+    color: #000;
+    font-weight: bold;
+}
+
+.card-title {
+    font-size: 1.6rem;
+    color: #4e4e47bd;
+}
 .menu {
     margin-top: 100px;
     padding: 0 0px;

@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import './Layout.css'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
+import { Badge } from 'antd'
 
 export const Layout = ({ children }) => {
     const [collapsed, setCollapsed] = useState(false);
+
     const user = useSelector(state => state?.user?.user)
     const navigate = useNavigate();
     const location = useLocation();
@@ -20,7 +22,7 @@ export const Layout = ({ children }) => {
             icon: 'ri-nurse-line'
         },
         {
-            name: "Выбрать доктора",
+            name: "Врачам-партнерам",
             path: '/apply-doctor',
             icon: 'ri-hospital-line'
         },
@@ -112,8 +114,8 @@ export const Layout = ({ children }) => {
                             })
                         }
                         <div
-                            onClick={() => { 
-                                localStorage.clear() 
+                            onClick={() => {
+                                localStorage.clear()
                                 navigate('/login')
                             }}
                             className={`menu-item`}>
@@ -135,7 +137,11 @@ export const Layout = ({ children }) => {
                         }
 
                         <div className="d-flex align-items-center gap-2 m-4">
-                            <i className="ri-notification-line  header-action-icon"></i>
+                            <Link to="/notifications">
+                                <Badge count={user?.unseenNotifications.length}>
+                                    <i className="ri-notification-line  header-action-icon"></i>
+                                </Badge>
+                            </Link>
                             <Link
                                 className='link'
                                 to="/profile">

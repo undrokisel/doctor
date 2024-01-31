@@ -2,18 +2,22 @@ import React, { useEffect } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { setUser } from '../redux/userReducer';
+import { 
+    // reloadUserData, 
+    setUser } from '../redux/userReducer';
 import { hideLoading, showLoading } from '../redux/alertReducer';
 
 export const ProtectedRoute = (props) => {
 
-    const { user } = useSelector(state => state.user);
+    const { user, 
+        // reloadUser 
+    } = useSelector(state => state.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const getUser = async () => {
         try {
-            dispatch(showLoading)
+            dispatch(showLoading())
             const response = await axios.post('/api/user/get-user-info-by-id',
                 { token: localStorage.getItem('token') },
                 {
@@ -22,16 +26,17 @@ export const ProtectedRoute = (props) => {
                     }
                 }
             )
-            dispatch(hideLoading)
+            dispatch(hideLoading())
             if (response.data.success) {
                 dispatch(setUser(response.data.data))
+                // dispatch(reloadUserData(false))
             } else {
                 localStorage.clear()
                 navigate('/login')
             }
-            
+
         } catch (error) {
-            dispatch(hideLoading)
+            dispatch(hideLoading())
             localStorage.clear()
             navigate('/login')
         }

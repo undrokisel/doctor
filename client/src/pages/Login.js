@@ -36,25 +36,27 @@ export const Login = () => {
 
   return (
     <div className='login m-0-auto volcano-2'>
-    
-        <div className="form card">
-          <h1 className="flag">Рады видеть вас снова!</h1>
-          <Form
-            onFinish={onFinish}
-            layout='vertical'>
-            <Form.Item label="Email" name='email'>
-              <Input type="email" placeholder='Email' />
-            </Form.Item>
-            <Form.Item label="Пароль" name='password'>
-              <Input type="password" placeholder='********' />
-            </Form.Item>
+
+      <div className="form card">
+        <h1 className="flag">Рады видеть вас снова!</h1>
+        <Form
+          onFinish={onFinish}
+          layout='vertical'>
+          <Form.Item label="Email" name='email'>
+            <Input type="email" placeholder='Email' />
+          </Form.Item>
+          <Form.Item label="Пароль" name='password'>
+            <Input type="password" placeholder='********' />
+          </Form.Item>
+          <div className="d-flex justify-content-center mb-2">
             <Button type="primary"
               htmlType='submit'
-              className='primary-button mt-3 mb-2'>Войти</Button>
-          </Form>
-          <Link className="link" to="../register">Еще нет аккаунта?</Link>
-        </div>
-      
+              className='primary-button mt-2 mb-2'>Войти</Button>
+          </div>
+        </Form>
+        <Link className="link" to="../register">Еще нет аккаунта?</Link>
+      </div>
+
     </div>
   )
 }

@@ -51,9 +51,12 @@ export const Register = () => {
             <Input type="password" placeholder='********' />
           </Form.Item>
 
-          <Button type="primary"
-            htmlType='submit'
-            className='primary-button mt-3 mb-2'>Зарегистрироваться</Button>
+          <div className="d-flex justify-content-center mb-2">
+            <Button 
+              type="primary"
+              htmlType='submit'
+              className='primary-button my-2'>Зарегистрироваться</Button>
+          </div>
         </Form>
         <Link className="link" to="../login">Уже есть аккаунт?</Link>
 

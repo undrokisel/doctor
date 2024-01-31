@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/userModel')
+const Doctor = require('../models/doctorModel')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 const authMiddleware = require('../middleware/authMiddleware')
@@ -54,13 +55,129 @@ router.post('/get-user-info-by-id', authMiddleware, async (req, res) => {
         } else {
             res.status(200).send({
                 success: true,
-                data: {...user._doc}
+                data: { ...user._doc }
             })
         }
     } catch (e) {
         res.status(500).send({ message: "Error getting user info", success: false, error })
     }
 })
+
+router.post('/apply-doctor-account', authMiddleware, async (req, res) => {
+    try {
+
+        // создаем и сохраняем в базу новый экземпляр доктора
+        const newDoctor = new Doctor({ ...req.body, status: 'pending' })
+        await newDoctor.save()
+
+        // получаем из базы нашего админа, его уведомления и обновляем их сообщением о новой заявке от доктора
+        const adminUser = await User.findOne({ isAdmin: true })
+        const unseenNotifications = adminUser.unseenNotifications
+        unseenNotifications.push({
+            type: 'new-doctor-request',
+            message: `${newDoctor.firstName} ${newDoctor.lastName} просит подтвердить аккаунт врача`,
+            data: {
+                doctorId: newDoctor._id,
+                name: newDoctor.firstName + " " + newDoctor.lastName
+            },
+            onClickPath: '/admin/doctors'
+        })
+        await User.findByIdAndUpdate(adminUser._id, { unseenNotifications })
+
+        res.status(200).send({ message: "Doctor account applied successfully", success: true })
+
+    } catch (error) {
+        console.log(error)
+        res
+            .status(500)
+            .send({
+                message: "Error applying doctor account",
+                success: false, error
+            })
+    }
+})
+
+router.post('/mark-all-notifications-as-seen', authMiddleware, async (req, res) => {
+
+    try {
+        const user = await User.findOne({ _id: req.body.userId })
+        if (user) {
+            const seenNotifications = [...user.seenNotifications, ...user.unseenNotifications]
+            const unseenNotifications = []
+            const updatedUser = await User.findByIdAndUpdate(user._id, {
+                seenNotifications,
+                unseenNotifications
+            }, {
+                new: true
+            })
+            if (updatedUser) {
+                updatedUser.password = undefined
+                res
+                    .status(200)
+                    .send({
+                        message: "unseen notifications moved to seen successfylly ",
+                        success: true,
+                        data: updatedUser,
+                    })
+            }
+        } else {
+            res
+                .status(200)
+                .send({
+                    message: "user does not exist",
+                    success: false,
+                })
+        }
+    } catch (error) {
+        console.log(error)
+        res
+            .status(500)
+            .send({
+                message: "Error moving unseen notifications to seen ",
+                success: false, error
+            })
+    }
+})
+
+router.post('/delete-all-notifications', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.body.userId })
+        if (user) {
+            const seenNotifications = [];
+            const unseenNotifications = [];
+            const updatedUser = await User.findByIdAndUpdate(user._id, {
+                seenNotifications, unseenNotifications
+            }, {
+                new: true
+            }
+            );
+            if (updatedUser) {
+                updatedUser.password = undefined
+                res
+                    .status(200)
+                    .send({
+                        message: "notifications deleted successfully",
+                        success: true,
+                        updatedUser
+                    })
+            }
+        } else {
+            res
+                .status(200)
+                .send({ message: "user does not exist", success: false })
+        }
+    } catch (error) {
+        console.log(error)
+        res
+            .status(500)
+            .send({
+                message: "Error with deleting all notifications",
+                success: false,
+                error
+            })
+    }
+})
+
 
 
 module.exports = router
