@@ -1,5 +1,6 @@
 .main {
     padding: 20px;
+    z-index: 0;
 }
 
 .sidebar {
@@ -9,6 +10,17 @@
     margin-right: 20px;
     height: 100vh;
     padding: 10px;
+
+    z-index: 1;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.sidebar-xs {
+    height: fit-content;
+    width: 91.5%;
 }
 
 .logo{
@@ -30,7 +42,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
 }
 
 .body {
@@ -39,7 +50,15 @@
     box-shadow: 0 0 2px gray;
     height: 82.7vh;
     padding: 15px;
+
 }
+.mt150 {
+    margin-top: 150px;
+}
+.mt350 {
+    margin-top: 350px;
+}
+
 
 .page-title {
     font-size: 1.8rem;
@@ -62,6 +81,14 @@
     padding-inline-start: 0;
 }
 
+.menu-xs {
+    flex-direction: row;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+
+
 @media screen and (max-width: 768px) {
     .menu {
         padding: 0 5px;
@@ -76,6 +103,9 @@
     gap: 10px;
     color: #fff !important;
     border-radius: 5px;
+
+    max-width: 200px;
+    overflow-x: hidden;
 
 }
 

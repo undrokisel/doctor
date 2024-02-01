@@ -22,7 +22,7 @@ export const Home = () => {
 
   return (
     <Layout>
-      <h1>Homepage</h1>
+      <h1 className='ps-4'>Homepage</h1>
     </Layout>
   )
 }

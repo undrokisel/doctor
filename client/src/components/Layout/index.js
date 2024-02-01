@@ -1,11 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Layout.css'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
-import { Badge } from 'antd'
+import { HeaderBar } from '../HeaderBar/HeaderBar';
+import { Flex } from 'antd';
 
 export const Layout = ({ children }) => {
     const [collapsed, setCollapsed] = useState(false);
+    const [smallScreen, setSmallScreen] = useState(false);
+
+
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth)
+
+    useEffect(() => {
+        (screenWidth < 500)
+            ? setSmallScreen(true)
+            : setSmallScreen(false)
+    }, [screenWidth, collapsed, smallScreen])
 
     const user = useSelector(state => state?.user?.user)
     const navigate = useNavigate();
@@ -41,13 +52,13 @@ export const Layout = ({ children }) => {
             icon: 'ri-home-4-line'
         },
         {
-            name: "Пациенты",
-            path: '/appointments',
+            name: "Все пациенты",
+            path: '/admin/users-list',
             icon: 'ri-nurse-line'
         },
         {
-            name: "Врачи",
-            path: '/apply-doctor',
+            name: "Все врачи",
+            path: '/admin/doctors-list',
             icon: 'ri-hospital-line'
         },
         {
@@ -92,72 +103,125 @@ export const Layout = ({ children }) => {
             ? doctorMenu
             : userMenu
 
+
+    // определяем ширину экрана
+    const handleResize = () => {
+        setScreenWidth(window.innerWidth);
+    };
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
         <div className="main">
             <div className="d-flex layout">
-                <aside className='sidebar'>
-                    <div className="sidebar__header">
-                        {!collapsed && <h1 className='logo'>Мой доктор</h1>}
+
+
+                {/* боковая панель */}
+                {/* на малых экранах становится по горизонтали на больших по вертикали, в любом случае fixed */}
+                <aside className={`sidebar fixed ${smallScreen && `sidebar-xs`}`}
+
+                >
+                    {/* лого, только на развернутой панели */}
+                    {/* и статус пациента */}
+                    <div className="sidebar__header d-flex justify-content-between align-items-center">
+                        {!collapsed
+                            && (
+                                <Flex className="flex-column">
+                                    <h1 className='logo'>Мой доктор</h1>
+                                    <h6 className='text-white'>
+                                        Статус: {
+                                            user?.isAdmin
+                                                ? "админ"
+                                                : user?.isDoctor
+                                                    ? "доктор"
+                                                    : "пациент"
+                                        }
+                                    </h6>
+                                </Flex>
+                            )
+                        }
+
+
                     </div>
-                    <menu className="menu">
+
+                    {/* хедер переносится в сайд бар на малых экранах */}
+                    {smallScreen &&
+                        <div className='d-flex flex-row-reverse align-items-center justify-content-between'>
+                            <HeaderBar
+                                screenWidth={screenWidth}
+                                collapsed={collapsed}
+                                setCollapsed={setCollapsed}
+                                user={user} />
+
+                        </div>
+                    }
+
+                    {/* меню в ряд на малых экранах, на больших в колонку */}
+                    <menu className={`menu ${smallScreen && 'menu-xs'}`}>
+
+
                         {
+                            // кнопки боковой панели
                             menuToBeRendered.map((item, index) => {
                                 const isActive = location.pathname === item.path
                                 return (
                                     <div key={index} className={`menu-item  ${isActive && 'active-menu-item'}`}>
-                                        <i className={item.icon}></i>
                                         {
-                                            !collapsed && <Link to={item.path} className="">{item.name}</Link>
+                                            <Link to={item.path} className="d-flex justify-content-between">
+                                                <i className={`${item.icon} ${!collapsed && 'me-3'}`}></i>
+                                                <span>{!collapsed && item.name}</span>
+                                            </Link>
                                         }
                                     </div>
                                 )
                             })
                         }
+
+
+                        {/* кнопка логаут */}
                         <div
                             onClick={() => {
                                 localStorage.clear()
                                 navigate('/login')
                             }}
                             className={`menu-item`}>
-                            <i className='ri-logout-box-r-line'></i>
-                            {
-                                !collapsed && <Link to='/login' >Выйти</Link>
-                            }
+
+                            {/* logout button link */}
+                            <Link to='/login' className="d-flex justify-content-between">
+                                <i className={`ri-logout-box-r-line ${!collapsed && 'me-3'}`}></i>
+                                <span>{!collapsed && 'Выйти'}</span>
+                            </Link>
                         </div>
+
                     </menu>
                 </aside>
 
+                {/* правая часть страницы с хередом и контентом */}
+                <main
+                    style={!smallScreen ? (!collapsed ? { "paddingLeft": '250px' } : {}) : {}}
+                    className={`content ${!smallScreen && (collapsed && 'ps-5')}`}
+                >
+                    {screenWidth > 500 &&
+                        <header className="header">
+                            <HeaderBar
+                                collapsed={collapsed}
+                                setCollapsed={setCollapsed}
+                                user={user}
+                                screenWidth={screenWidth}
+                            />
+                        </header>
+                    }
 
-                <main className='content'>
-                    <header className="header">
-                        {
-                            !collapsed
-                                ? <i onClick={() => setCollapsed(true)} className='ri-close-fill header-action-icon'></i>
-                                : <i onClick={() => setCollapsed(false)} className="ri-menu-3-line header-action-icon"></i>
-                        }
-
-                        <div className="d-flex align-items-center gap-2 m-4">
-                            <Link to="/notifications">
-                                <Badge count={user?.unseenNotifications.length}>
-                                    <i className="ri-notification-line  header-action-icon"></i>
-                                </Badge>
-                            </Link>
-                            <Link
-                                className='link'
-                                to="/profile">
-                                {user?.name}
-                            </Link>
-                        </div>
-
-
-                    </header>
-
-                    <div className="body">
+                    <div className={`body ${smallScreen && (collapsed ? 'mt150' : 'mt350')}`}>
                         {children}
                     </div>
                 </main>
             </div>
-        </div>
+        </div >
 
     )
 }

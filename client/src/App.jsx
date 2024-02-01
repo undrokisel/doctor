@@ -9,6 +9,8 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { PublicRoute } from './components/PublicRoute';
 import { ApplyDoctor } from './pages/ApplyDoctor';
 import { Notifications } from './pages/Notifications';
+import { UsersList } from './pages/Admin/UsersList';
+import { DoctorsList } from './pages/Admin/DoctorsList';
 
 function App() {
   const { loading } = useSelector(state => state.alerts)
@@ -17,27 +19,47 @@ function App() {
     <BrowserRouter>
       {loading && <Loader />}
       <Toaster position="top-center" reverseOrder={false} />
+
       <Routes>
+
         <Route path='/login' element={
           <PublicRoute>
             <Login />
           </PublicRoute>
         } />
+
         <Route path='/register' element={
           <PublicRoute>
             <Register />
           </PublicRoute>
         } />
+
         <Route path='/apply-doctor' element={
           <ProtectedRoute>
             <ApplyDoctor />
           </ProtectedRoute>
         } />
-        <Route path='/notifications' element={
+
+        <Route path='/notifications'
+          element={
+            <ProtectedRoute>
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* admin */}
+        <Route path='/admin/users-list' element={
           <ProtectedRoute>
-            <Notifications />
+            <UsersList />
           </ProtectedRoute>
         } />
+        <Route path='/admin/doctors-list' element={
+          <ProtectedRoute>
+            <DoctorsList />
+          </ProtectedRoute>
+        } />
+
         <Route path='/' element={
           <ProtectedRoute>
             <Home />

@@ -41,7 +41,6 @@ export const Notifications = () => {
     const deleteAllNotes = async () => {
         try {
             dispatch(showLoading());
-            console.log('ttt')
             const response = await axios.post('api/user/delete-all-notifications', { userId: user._id }, {
                 headers: {
                     Authorisation: 'Bearer ' + localStorage.getItem('token')
@@ -102,8 +101,8 @@ export const Notifications = () => {
 
     return (
         <Layout>
-            <h1>Уведомления</h1>
-            <Tabs defaultActiveKey="1" items={items} />
+            <h1 className='ps-3'>Уведомления</h1>
+            <Tabs className='ps-3' defaultActiveKey="1" items={items} />
         </Layout>
     )
 }
