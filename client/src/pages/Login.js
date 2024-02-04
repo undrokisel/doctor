@@ -22,7 +22,6 @@ export const Login = () => {
       if (res.data.success) {
         toast.success(res.data.message)
         localStorage.setItem('token', res.data.data)
-        toast.success("Редирект на главную страницу")
         navigate('/')
       } else {
         toast.error(res.data.message)

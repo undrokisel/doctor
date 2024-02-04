@@ -80,7 +80,7 @@ router.post('/apply-doctor-account', authMiddleware, async (req, res) => {
                 doctorId: newDoctor._id,
                 name: newDoctor.firstName + " " + newDoctor.lastName
             },
-            onClickPath: '/admin/doctors'
+            onClickPath: '/admin/doctors-list'
         })
         await User.findByIdAndUpdate(adminUser._id, { unseenNotifications })
 
@@ -175,6 +175,24 @@ router.post('/delete-all-notifications', authMiddleware, async (req, res) => {
                 success: false,
                 error
             })
+    }
+})
+
+router.get('/get-all-approved-doctors', authMiddleware, async (req, res) => {
+    
+    try {
+        const approvedDoctors = await Doctor.find({ status: 'approved' })
+        res.status(200).send({
+            message: "getting all approved doctors successfully",
+            data: approvedDoctors,
+            success: true
+        })
+    } catch (error) {
+        res.status(500).send({
+            error,
+            message: "Error with getting all approved doctors",
+            success: false
+        })
     }
 })
 

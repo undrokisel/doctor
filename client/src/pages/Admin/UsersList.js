@@ -16,7 +16,7 @@ export const UsersList = () => {
 
         try {
             dispatch(showLoading())
-            const response = await axios.get('api/admin/get-all-users', {
+            const response = await axios.get('/api/admin/get-all-users', {
                 headers: {
                     Authorisation: 'Bearer ' + localStorage.getItem('token'),
                 }

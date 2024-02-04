@@ -20,7 +20,6 @@ export const Register = () => {
       dispatch(hideLoading())
       if (res.data.success) {
         toast.success(res.data.message)
-        toast.success("Редирект на страницу входа")
         navigate('/login')
       } else {
         toast.error(res.data.message)

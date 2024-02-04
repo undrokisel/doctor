@@ -81,18 +81,13 @@ export const Layout = ({ children }) => {
             icon: 'ri-nurse-line'
         },
         {
-            name: "Подтвержденные записи",
-            path: '/apply-doctor',
-            icon: 'ri-hospital-line'
-        },
-        {
-            name: "Неподтвержденные записи",
-            path: '/apply-doctor',
+            name: "Назначенные приемы",
+            path: '/appoinments',
             icon: 'ri-hospital-line'
         },
         {
             name: "Профиль",
-            path: '/profile',
+            path: `/doctor/profile/${user?._id}`,
             icon: 'ri-user-line'
         },
     ]
@@ -108,6 +103,7 @@ export const Layout = ({ children }) => {
     const handleResize = () => {
         setScreenWidth(window.innerWidth);
     };
+    
     useEffect(() => {
         window.addEventListener('resize', handleResize);
         return () => {

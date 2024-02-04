@@ -4,8 +4,6 @@ const router = express.Router();
 const User = require('../models/userModel')
 const Doctor = require('../models/doctorModel')
 
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken')
 const authMiddleware = require('../middleware/authMiddleware')
 
 router.get('/get-all-users', authMiddleware, async (req, res) => {

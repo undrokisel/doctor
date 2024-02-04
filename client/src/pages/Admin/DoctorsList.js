@@ -17,7 +17,7 @@ export const DoctorsList = () => {
 
         try {
             dispatch(showLoading())
-            const response = await axios.get('api/admin/get-all-doctors', {
+            const response = await axios.get('/api/admin/get-all-doctors', {
                 headers: {
                     Authorisation: 'Bearer ' + localStorage.getItem('token'),
                 }
@@ -49,7 +49,7 @@ export const DoctorsList = () => {
                 reqUserId: userId,
                 status,
             }
-            const response = await axios.post('api/admin/change-status-doctor', {
+            const response = await axios.post('/api/admin/change-status-doctor', {
                 ...data
             }, {
                 headers: {
