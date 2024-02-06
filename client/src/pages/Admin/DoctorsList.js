@@ -42,7 +42,7 @@ export const DoctorsList = () => {
 
     const handleChangeDoctorStatus = async ({ _id, userId }, status) => {
         try {
-            dispatch(showLoading)
+            dispatch(showLoading())
 
             const data = {
                 doctorId: _id,
@@ -56,7 +56,7 @@ export const DoctorsList = () => {
                     Authorisation: 'Bearer ' + localStorage.getItem('token')
                 }
             })
-            dispatch(hideLoading)
+            dispatch(hideLoading())
             if (response.data.success) {
                 toast.success("Статус врача успешно изменен")
                 getAllDoctors()
@@ -64,18 +64,18 @@ export const DoctorsList = () => {
                 toast.error("Ошибка при изменении статуса врача")
             }
         } catch (error) {
-            dispatch(hideLoading)
+            dispatch(hideLoading())
             toast.error("Ошибка при изменении статуса врача")
         }
     }
 
     const doctorStatusAction = (record) => (
-        record.status === 'pending'
+        record.status === PENDING
             ? <Flex className='flex-column'>
                 <h1 onClick={() => handleChangeDoctorStatus(record, APPROVED)} className="link">Подтвердить</h1>
                 <h1 onClick={() => handleChangeDoctorStatus(record, BLOCKED)} className="link">Блокировать</h1>
             </Flex>
-            : record.status === 'approved'
+            : record.status === APPROVED
             &&
             <h1 onClick={() => handleChangeDoctorStatus(record, BLOCKED)} className="link">Блокировать</h1>
 
@@ -102,9 +102,9 @@ export const DoctorsList = () => {
                     <Flex {...xsFlexProps}><div>Сайт: </div><div>{record.webSite}</div></Flex>
                     <Flex {...xsFlexProps}><div>Стоимость: </div><div>{record.feePerConsultation}</div></Flex>
                     <Flex {...xsFlexProps}><div>Статус: </div><div>{
-                        record.status === "pending"
+                        record.status === PENDING
                             ? "Ожидает подтверждения"
-                            : record.status === "approved" && "Подтвержден"
+                            : record.status === APPROVED && "Подтвержден"
                     }</div></Flex>
                     <Flex {...xsFlexProps}>{doctorStatusAction(record)}</Flex>
                     <hr />
@@ -176,7 +176,6 @@ export const DoctorsList = () => {
                 <Flex gap="middle">
                     {
                         doctorStatusAction(record)
-                        //         record.status === 'pending' && <h1 className="link">Подтвердить</h1>
                     }
                 </Flex>
             )

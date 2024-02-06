@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/userModel')
 const Doctor = require('../models/doctorModel')
+const Appointment = require('../models/appointmentModel')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 const authMiddleware = require('../middleware/authMiddleware')
+const moment = require('moment')
 
 router.post('/register', async (req, res) => {
     try {
@@ -74,7 +76,7 @@ router.post('/apply-doctor-account', authMiddleware, async (req, res) => {
         const adminUser = await User.findOne({ isAdmin: true })
         const unseenNotifications = adminUser.unseenNotifications
         unseenNotifications.push({
-            type: 'new-doctor-request',
+            type: 'Новая партнерская заявка',
             message: `${newDoctor.firstName} ${newDoctor.lastName} просит подтвердить аккаунт врача`,
             data: {
                 doctorId: newDoctor._id,
@@ -179,7 +181,7 @@ router.post('/delete-all-notifications', authMiddleware, async (req, res) => {
 })
 
 router.get('/get-all-approved-doctors', authMiddleware, async (req, res) => {
-    
+
     try {
         const approvedDoctors = await Doctor.find({ status: 'approved' })
         res.status(200).send({
@@ -196,7 +198,137 @@ router.get('/get-all-approved-doctors', authMiddleware, async (req, res) => {
     }
 })
 
+router.get('/get-doctor-info-by-id/:id', authMiddleware, async (req, res) => {
+    try {
+        const doctor = await Doctor.findOne({ _id: req.params.id })
 
+        res.status(200).send({
+            message: "getting doctor info successfully",
+            data: doctor,
+            success: true
+        })
+    } catch (error) {
+        res.status(500).send({
+            error,
+            message: "Error with getting doctor",
+            success: false
+        })
+    }
+})
+
+
+router.post('/book-appointment', authMiddleware, async (req, res) => {
+
+    try {
+        // создаем экземпляр Записи
+        req.body.status = 'pending';
+        const date = moment(req.body.date, "DD-MM-YYYY").toISOString()
+
+        const time = moment(req.body.time, "HH:mm").toISOString()
+        const data = {
+            ...req.body, date, time
+        }
+
+        const newAppointment = new Appointment(data)
+        await newAppointment.save();
+
+        // создаем уведомление для доктора
+        const doctorAsUser = await User.findOne({ _id: req.body.doctorInfo.userId })
+        doctorAsUser.unseenNotifications.push({
+            type: "новый запрос от пациента",
+            message: `Запрос на запись от пациента ${req.body.userInfo.name}`,
+            onClickPath: '/doctor/appointments'
+        })
+        await doctorAsUser.save()
+
+        res.status(200).send({
+            success: true,
+            message: `appointment to doctor ${req.body.doctorInfo.firstName} ${req.body.doctorInfo.lastName} created successfully`
+        })
+
+    } catch (error) {
+        res.status(500).send({
+            error,
+            succes: false,
+            message: "Error with booking boctor"
+        })
+    }
+})
+
+
+router.post('/check-booking-availability', authMiddleware, async (req, res) => {
+    try {
+        // получаем из запроса дату
+        const date = moment(req.body.date, "DD-MM-YYYY").toISOString();
+        // получаем из запроса время за час до начала консультации
+        const fromTime = moment(req.body.time, "HH:mm")
+            .subtract(59, "minutes")
+            .toISOString();
+        // получаем ожидаемое время конца запрашиваемой консультации 
+        const toTime = moment(req.body.time, "HH:mm")
+            .add(59, 'minutes')
+            .toISOString();
+
+
+        const doctorAppointments = await Appointment.find({
+            doctorId: req.body.doctorId,
+            date: { $gte: date, $lte: date },
+            time: { $gte: fromTime, $lte: toTime },
+            status: "approved"
+        })
+
+
+        if (doctorAppointments.length > 0) {
+            res.status(200).send({
+                success: false,
+                message: `appointment is not available`
+            })
+        } else {
+            res.status(200).send({
+                success: true,
+                message: `appointment is available`
+            })
+        }
+
+    } catch (error) {
+        res.status(500).send({
+            error,
+            success: false,
+            message: "Error with checking boctor time availability"
+        })
+    }
+})
+
+
+router.get('/get-appointments-by-user-id', authMiddleware, async (req, res) => {
+    try {
+        const appointments = await Appointment.find({ userId: req.body.userId })
+        if (appointments) {
+            res
+                .status(200)
+                .send({
+                    success: true,
+                    message: "appointments fetched successfully",
+                    data: appointments
+                })
+        } else {
+            res
+                .status(200)
+                .send({
+                    success: false,
+                    message: "appointments not found"
+                })
+        }
+    } catch (error) {
+        res
+            .status(500)
+            .send({
+                error,
+                success: false,
+                message: "Error with fetching appointments"
+            })
+    }
+})
 
 module.exports = router
 

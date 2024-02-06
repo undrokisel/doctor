@@ -14,18 +14,18 @@ export const Home = () => {
 
   const getApprovedDoctors = async () => {
     try {
-      dispatch(showLoading)
+      dispatch(showLoading())
       const response = await axios.get('/api/user/get-all-approved-doctors', {
         headers: {
           Authorisation: 'Bearer ' + localStorage.getItem('token')
         }
       })
-      dispatch(hideLoading)
+      dispatch(hideLoading())
       if (response.data.success) {
         setApprovedDoctors(response.data.data)
       }
     } catch (error) {
-      dispatch(hideLoading)
+      dispatch(hideLoading())
       toast.error("Ошибка при получении данных подтвержденных врачей")
     }
   }
@@ -36,11 +36,11 @@ export const Home = () => {
 
   return (
     <Layout>
-      <h1 className='ps-4'>Homepage</h1>
+      <h1 className='ps-4'>Наши врачи</h1>
       <Row gutter={20}>
         {
           approvedDoctors && approvedDoctors.map((doctor, index) => (
-            <Col key={index} span={8} xs={24} sm={24} ls={8}>
+            <Col key={index} span={8} xs={24} sm={24} lg={8}>
               <Doctor doctor={doctor} />
             </Col>
           ))

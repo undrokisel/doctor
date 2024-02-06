@@ -80,8 +80,8 @@ router.post('/change-status-doctor', authMiddleware, async (req, res) => {
         const user = await User.findById(reqUserId)
         const unseenNotifications = user.unseenNotifications
         unseenNotifications.push({
-            type: 'new-doctor-request-changed',
-            message: `Your doctor account has been ${status}`,
+            type: 'Новость по заявке',
+            message: `У вашей партенрской заявки изменен статус на ${status}`,
             onClickPath: '/notifications'
         })
         user.isDoctor = status === "approved" ? true: false;

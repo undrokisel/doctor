@@ -11,11 +11,11 @@ export const DoctorForm = ({ onFinish, initialValues }) => {
             initialValues={{
                 ...initialValues,
                 ...(initialValues && {
-                        timings: [
-                            moment(initialValues?.timings[0], "HH:mm"),
-                            moment(initialValues?.timings[1], "HH:mm"),
-                        ]
-                    }
+                    timings: [
+                        moment(initialValues?.timings[0], "HH:mm"),
+                        moment(initialValues?.timings[1], "HH:mm"),
+                    ]
+                }
                 )
             }}
             layout='vertical' >
@@ -89,7 +89,9 @@ export const DoctorForm = ({ onFinish, initialValues }) => {
                     <Form.Item required label="Часы работы"
                         name='timings'
                         rules={[{ required: true }]}>
-                        <TimePicker.RangePicker format='HH:mm' />
+                        <TimePicker.RangePicker
+                            format='HH:mm'
+                        />
                     </Form.Item>
                 </Col>
             </Row>
@@ -97,7 +99,10 @@ export const DoctorForm = ({ onFinish, initialValues }) => {
             <div className="d-flex justify-content-end">
                 <Button
                     htmlType='submit'
-                    className='primary-button text-light'>ПОДТВЕРДИТЬ</Button>
+                    className='primary-button text-light'
+                >
+                    ПОДТВЕРДИТЬ
+                </Button>
             </div>
 
         </Form >

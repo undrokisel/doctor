@@ -6,7 +6,7 @@ import { HeaderBar } from '../HeaderBar/HeaderBar';
 import { Flex } from 'antd';
 
 export const Layout = ({ children }) => {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const [smallScreen, setSmallScreen] = useState(false);
 
 
@@ -28,7 +28,7 @@ export const Layout = ({ children }) => {
             icon: 'ri-home-4-line'
         },
         {
-            name: "Активные записи",
+            name: "Текущие записи",
             path: '/appointments',
             icon: 'ri-nurse-line'
         },
@@ -36,11 +36,6 @@ export const Layout = ({ children }) => {
             name: "Врачам-партнерам",
             path: '/apply-doctor',
             icon: 'ri-hospital-line'
-        },
-        {
-            name: "Профиль",
-            path: '/profile',
-            icon: 'ri-user-line'
         },
     ]
 
@@ -61,11 +56,6 @@ export const Layout = ({ children }) => {
             path: '/admin/doctors-list',
             icon: 'ri-hospital-line'
         },
-        {
-            name: "Профиль",
-            path: '/profile',
-            icon: 'ri-user-line'
-        },
     ]
 
 
@@ -82,7 +72,7 @@ export const Layout = ({ children }) => {
         },
         {
             name: "Назначенные приемы",
-            path: '/appoinments',
+            path: '/doctor/appointments',
             icon: 'ri-hospital-line'
         },
         {

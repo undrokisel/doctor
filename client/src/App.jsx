@@ -12,6 +12,9 @@ import { Notifications } from './pages/Notifications';
 import { UsersList } from './pages/Admin/UsersList';
 import { DoctorsList } from './pages/Admin/DoctorsList';
 import { Profile } from './pages/Doctor/Profile';
+import { BookAppointment } from './pages/BookAppointment';
+import { Appointments } from './pages/Appointments';
+import { DoctorAppointments } from './pages/Doctor/DoctorAppointments';
 
 function App() {
   const { loading } = useSelector(state => state.alerts)
@@ -49,6 +52,22 @@ function App() {
           }
         />
 
+        <Route path='/appointments'
+          element={
+            <ProtectedRoute>
+              <Appointments />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path='/book-appointment/:doctorId'
+          element={
+            <ProtectedRoute>
+              <BookAppointment />
+            </ProtectedRoute>
+          }
+        />
+
         {/* admin */}
         <Route path='/admin/users-list' element={
           <ProtectedRoute>
@@ -68,6 +87,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          } />
+
+        <Route
+          path='/doctor/appointments'
+          element={
+            <ProtectedRoute>
+              <DoctorAppointments />
             </ProtectedRoute>
           } />
 

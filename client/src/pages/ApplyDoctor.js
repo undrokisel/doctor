@@ -16,8 +16,6 @@ export const ApplyDoctor = () => {
     const navigate = useNavigate()
 
     const onFinish = async (values) => {
-
-
         try {
             dispatch(showLoading())
             const res = await axios.post('/api/user/apply-doctor-account', {
@@ -25,8 +23,8 @@ export const ApplyDoctor = () => {
                 // id юзера, с аккаунта которого сделана заявка на создание доктора
                 userId: user._id, 
                 timings: [
-                    moment(values.timings[0].format("HH:mm") ),
-                    moment(values.timings[1].format("HH:mm")),
+                    moment(values.timings[0].$d).format("HH:mm" ),
+                    moment(values.timings[1].$d).format("HH:mm"),
                 ]
             }, {
                 headers: {
